@@ -2,10 +2,10 @@
   "name": "taskbackend",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts"
-  },
+ "scripts": {
+  "start": "node dist/index.js",
+  "build": "tsc"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
