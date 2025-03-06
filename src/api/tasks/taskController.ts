@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
-import { queryPool } from "../../db/connection";
-import { taskQuery } from "./taskQuery";
+import { prisma } from "../../helper/prisma";
 
 
 export const create=async(req:Request,res:Response):Promise<any>=>{
     try {
-        const {title,description}=req.body
-        const newTask=await queryPool.query(taskQuery.createTask,[title,description]);
+        const {title,status}=req.body
+        const newTask=await prisma.task.create({
+            data:{
+                title,
+                status,
+                userId:1
+            }   
+        })
         return res.status(200).json(newTask);
         
         
@@ -18,7 +23,8 @@ export const create=async(req:Request,res:Response):Promise<any>=>{
 
 export const findAll=async(req:Request,res:Response):Promise<any>=>{
     try {
-        const tasks=await queryPool.query(taskQuery.findAll);
+        const tasks=await prisma.task.findMany();
+
         return res.status(200).json(tasks);
         
     } catch (error) {
@@ -30,7 +36,11 @@ export const findAll=async(req:Request,res:Response):Promise<any>=>{
 export const findById=async(req:Request,res:Response):Promise<any>=>{
     try {
         const {id}=req.params
-        const task=await queryPool.query(taskQuery.findById,[id]);
+        const task=await prisma.task.findUnique({
+            where:{
+                id:Number(id)
+            }
+        })
         return res.status(200).json(task);
         
     } catch (error) {
@@ -43,8 +53,17 @@ export const findById=async(req:Request,res:Response):Promise<any>=>{
 export const update=async(req:Request,res:Response):Promise<any>=>{
     try {
         const {id}=req.params
-        const {title,description}=req.body
-        const task=await queryPool.query(taskQuery.updateTask,[title,description,id]);
+        const {title,status}=req.body
+        const task=await prisma.task.update({
+            where:{
+                id:Number(id)
+            },
+            data:{
+                title,
+                status
+            }
+
+        });
         return res.status(200).json(task);
         
     } catch (error) {
@@ -58,7 +77,11 @@ export const update=async(req:Request,res:Response):Promise<any>=>{
 export const remove=async(req:Request,res:Response):Promise<any>=>{
     try {
         const {id}=req.params
-        const task=await queryPool.query(taskQuery.removeTask,[id]);
+        const task=await prisma.task.delete({
+            where:{
+                id:Number(id)
+            }
+        });
         return res.status(200).json(task);
         
     } catch (error) {
