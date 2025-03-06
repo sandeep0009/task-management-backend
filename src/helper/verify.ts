@@ -1,12 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/config";
+import { User } from "@prisma/client";
 
-interface AuthRequest extends Request {
-    user?: any;
+declare global {
+    namespace Express {
+        interface Request {
+            user?: User;
+        }
+    }
 }
 
-export const authFunction = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const authFunction = (req: Request, res: Response, next: NextFunction): void => {
     try {
         const token = req.header("Authorization")?.split(" ")[1];
 
@@ -15,7 +20,7 @@ export const authFunction = (req: AuthRequest, res: Response, next: NextFunction
             return;
         }
 
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET) as User;
         req.user = decoded;
 
         next();

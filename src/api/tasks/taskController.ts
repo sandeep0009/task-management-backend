@@ -1,15 +1,22 @@
 import { Request, Response } from "express";
 import { prisma } from "../../helper/prisma";
+import { taskSchema } from "../../helper/zodVerfication";
 
 
 export const create=async(req:Request,res:Response):Promise<any>=>{
     try {
-        const {title,status}=req.body
+        const {title,status}=req.body;
+        const parseData=await taskSchema.safeParse(req.body);
+        if(!parseData.success){
+            return res.status(400).json({message:parseData.error});
+        }
+
+        const userId = req.user?.id;
         const newTask=await prisma.task.create({
             data:{
                 title,
                 status,
-                userId:1
+                userId:Number(userId)
             }   
         })
         return res.status(200).json(newTask);

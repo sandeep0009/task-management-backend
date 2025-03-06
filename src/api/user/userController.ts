@@ -3,10 +3,16 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../../config/config";
 import { prisma } from "../../helper/prisma";
+import { userSignInSchema, userSignUpSchema } from "../../helper/zodVerfication";
 
 export const signup = async (req: Request, res: Response): Promise<any> => {
     try {
         const { name, email, password } = req.body;
+
+        const parseData=await userSignUpSchema.safeParse(req.body);
+        if(!parseData.success){
+            return res.status(400).json({message:parseData.error});
+        }
 
         const existingUser = await prisma.user.findUnique({
             where: { email }
@@ -35,6 +41,10 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
 export const signIn = async (req: Request, res: Response): Promise<any> => {
     try {
         const { email, password } = req.body;
+        const parseData=await userSignInSchema.safeParse(req.body);
+        if(!parseData.success){
+            return res.status(400).json({message:parseData.error});
+        }
 
         const user = await prisma.user.findUnique({
             where: { email }
