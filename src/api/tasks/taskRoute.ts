@@ -1,13 +1,13 @@
-import express from "express";
-import { create, findAll, findById, update, remove } from "./taskController";
+import { Router } from "express";
+import { create, findAll, findById, remove, update } from "./taskController";
 import { authFunction } from "../../helper/verify";
 
-const router = express.Router();
+const router=Router();
 
-router.post("/tasks", authFunction, create);
-router.get("/tasks", authFunction, findAll);
-router.get("/tasks/:id", authFunction, findById);
-router.put("/tasks/:id", authFunction, update);
-router.delete("/tasks/:id", authFunction, remove);
+router.post('/create',authFunction,create);
+router.get('/all',authFunction,findAll);
+router.get('/:id',authFunction,findById);
+router.put('/:id',authFunction,update);
+router.delete('/:id',authFunction,remove);
 
 export default router;
