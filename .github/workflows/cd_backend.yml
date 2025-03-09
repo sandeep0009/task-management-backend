@@ -1,17 +1,20 @@
-
 name: 'deploy backend'
 on:
   push:
     branches:
-      - [master]
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: setup the backend
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '22'
-    - run: npm install
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '20'  
+
+      - name: Install dependencies
+        run: npm install
